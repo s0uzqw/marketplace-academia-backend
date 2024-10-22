@@ -38,10 +38,12 @@ app.get("/usuarios", async (req, res) => {
             user: process.env.dbuser ? process.env.dbuser : "root",
             password: process.env.dbpassword ? process.env.dbpassword : "",
             database: process.env.dbname ? process.env.dbname : "banco1022b",
-            port: process.env.dbport ? parseInt(process.env.dbport) : 3306,
+            port: process.env.dbport ? parseInt(process.env.dbport) : 3306
         });
 
+        // Query para selecionar usuários
         const [result, fields] = await conexao.query("SELECT * FROM usuarios");
+        
         await conexao.end();
         res.send(result);
     } catch (e) {
