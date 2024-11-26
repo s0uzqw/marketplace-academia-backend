@@ -52,7 +52,7 @@ app.get("/usuarios",async(req,res)=>{
             database:process.env.dbname?process.env.dbname:"banco1022b",
             port:process.env.dbport?parseInt(process.env.dbport):3306
         })
-        const [result,fields]  = await conexao.query("SELECT * FROM produtos")
+        const [result,fields]  = await conexao.query("SELECT * FROM usuarios")
         await conexao.end()
         res.send(result)
     }catch(e){
