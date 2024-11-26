@@ -1,54 +1,87 @@
 import express from 'express'
-import mysql from 'mysql2/promise'
 import cors from 'cors'
+import mysql from 'mysql2/promise'
 
 const app = express()
 app.use(express.json())
 app.use(cors())
 
+app.get("/produtos",async(req,res)=>{
+    try{
+        const conexao = await mysql.createConnection({
+            host: process.env.dbhost?process.env.dbhost:"localhost",
+            user:process.env.dbuser?process.env.dbuser:"root",
+            password:process.env.dbpassword?process.env.dbpassword:"",
+            database:process.env.dbname?process.env.dbname:"banco1022b",
+            port:process.env.dbport?parseInt(process.env.dbport):3306
+        })
+        const [result,fields]  = await conexao.query("SELECT * FROM produtos")
+        await conexao.end()
+        res.send(result)
+    }catch(e){
+        res.status(500).send("Erro do servidor")
+    }  
+})
 
-app.get("/produtos", async (req, res) => {
-    let connection;
-    try {
-        connection = await mysql.createConnection({
-            host: process.env.dbhost || "localhost",
-            user: process.env.dbuser || "root",
-            password: process.env.dbpassword || "",
-            database: process.env.dbname || "banco1022b",
-            port: process.env.dbport ? parseInt(process.env.dbport) : 3306
-        });
-        const [result, fields] = await connection.query("SELECT * FROM produtos");
-        res.send(result);
-    } catch (e) {
-        console.error(e); // Para logar o erro no console
-        res.status(500).send("Server ERROR");
-    } finally {
-        if (connection) await connection.end();
-    }
-});
+app.post("/produtos",async(req,res)=>{
+    try{
+        const conexao = await mysql.createConnection({
+            host: process.env.dbhost?process.env.dbhost:"localhost",
+            user:process.env.dbuser?process.env.dbuser:"root",
+            password:process.env.dbpassword?process.env.dbpassword:"",
+            database:process.env.dbname?process.env.dbname:"banco1022b",
+            port:process.env.dbport?parseInt(process.env.dbport):3306
+        })
+        const {id,nome,descricao,preco,imagem} = req.body
+        const [result,fields]  = 
+            await conexao.query("INSERT INTO produtos VALUES (?,?,?,?,?)",
+                [id,nome,descricao,preco,imagem])
+        await conexao.end()
+        res.status(200).send(result)
+    }catch(e){
+        console.log(e)
+        res.status(500).send("Erro do servidor")
+    }  
+})
+app.get("/usuarios",async(req,res)=>{
+    try{
+        const conexao = await mysql.createConnection({
+            host: process.env.dbhost?process.env.dbhost:"localhost",
+            user:process.env.dbuser?process.env.dbuser:"root",
+            password:process.env.dbpassword?process.env.dbpassword:"",
+            database:process.env.dbname?process.env.dbname:"banco1022b",
+            port:process.env.dbport?parseInt(process.env.dbport):3306
+        })
+        const [result,fields]  = await conexao.query("SELECT * FROM produtos")
+        await conexao.end()
+        res.send(result)
+    }catch(e){
+        res.status(500).send("Erro do servidor")
+    }  
+})
 
-app.get("/usuarios", async (req, res) => {
-    let connection;
-    try {
-        connection = await mysql.createConnection({
-            host: process.env.dbhost || "localhost",
-            user: process.env.dbuser || "root",
-            password: process.env.dbpassword || "",
-            database: process.env.dbname || "banco1022b",
-            port: process.env.dbport ? parseInt(process.env.dbport) : 3306
-        });
+app.post("/usuarios",async(req,res)=>{
+    try{
+        const conexao = await mysql.createConnection({
+            host: process.env.dbhost?process.env.dbhost:"localhost",
+            user:process.env.dbuser?process.env.dbuser:"root",
+            password:process.env.dbpassword?process.env.dbpassword:"",
+            database:process.env.dbname?process.env.dbname:"banco1022b",
+            port:process.env.dbport?parseInt(process.env.dbport):3306
+        })
+        const {id,nome,email} = req.body
+        const [result,fields]  = 
+            await conexao.query("INSERT INTO produtos VALUES (?,?,?,?,?)",
+                [id,nome,email])
+        await conexao.end()
+        res.status(200).send(result)
+    }catch(e){
+        console.log(e)
+        res.status(500).send("Erro do servidor")
+    }  
+})
 
-        const [result] = await connection.query("SELECT * from usuarios");
-        res.send(result);
-    } catch (e) {
-        console.error(e);  // Log do erro para entender o que está acontecendo
-        res.status(500).send({ message: "Server ERROR"}); // Retorna o erro detalhado para facilitar o debug
-    } finally {
-        if (connection) await connection.end();  // Certifica que a conexão será fechada
-    }
-});
-
-
-app.listen(8000, () => {
-    console.log("Servidor Iniciado")
+//INICIAR O SERVIDOR
+app.listen(8000,()=>{
+    console.log("SERVIDOR INICIADO NA PORTA 8000")
 })
