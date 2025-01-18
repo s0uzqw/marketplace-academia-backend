@@ -15,15 +15,41 @@ class BancoMysql {
         });
     }
 
-    async query(queryString:string,params?:Array<any>) {
+    async getConnection() {
         const conn = await this.conexao; 
-        const [result, fields] = await conn.query(queryString,params);
-        return result;
+        return conn;
     }
 
     async end() {
         const conn = await this.conexao; 
         await conn.end();
+    }
+
+    async listar(){
+        const conn = await this.getConnection()
+        const [result, fields] = await conn.query("SELECT * from produtos");
+        return result
+    }
+    async inserir(produto:{id:string,nome:string,descricao:string,preco:string,imagem:string}){
+        const conn = await this.getConnection()
+        const sqlQuery = "INSERT INTO produtos (id,nome,descricao,preco,imagem) VALUES (?,?,?,?,?)"
+        const parametro = [produto.id,produto.nome,produto.descricao,produto.preco,produto.imagem]
+        const [result, fields] = await conn.query(sqlQuery,parametro);
+        return result
+    }
+    async excluir(id:string){
+        const conn = await this.getConnection()
+        const sqlQuery = "DELETE FROM produtos WHERE id = ?"
+        const parametro = [id]
+        const [result, fields] = await conn.query(sqlQuery,parametro);
+        return result
+    }
+    async alterar(id:string,produto:{id?:string,nome:string,descricao:string,preco:string,imagem:string}){
+        const conn = await this.getConnection()
+        const sqlQuery = "UPDATE produtos SET nome=?,descricao=?,preco=?,imagem=? WHERE id = ?"
+        const parametro = [produto.nome,produto.descricao,produto.preco,produto.imagem,id]
+        const [result, fields] = await conn.query(sqlQuery,parametro);
+        return result
     }
 }
 
