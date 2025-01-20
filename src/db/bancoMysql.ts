@@ -1,56 +1,49 @@
-import mysql, { Connection } from 'mysql2/promise';
+import { MongoClient } from 'mongodb';
 
-class BancoMysql {
-    // Propriedade
-    private conexao: Promise<Connection>;
-
-    // Métodos
-    constructor() {
-        this.conexao = mysql.createConnection({
-            host: process.env.dbhost ? process.env.dbhost : "localhost",
-            user: process.env.dbuser ? process.env.dbuser : "root",
-            password: process.env.dbpassword ? process.env.dbpassword : "",
-            database: process.env.dbname ? process.env.dbname : "banco1022b",
-            port: process.env.dbport ? parseInt(process.env.dbport) : 3306
-        });
+//const url = 'mongodb://localhost:27017';
+//const client = new MongoClient(url);
+//const dbName = 'banco1022b';
+//await client.connect();
+//const db = client.db(dbName);
+class BancoMongo{
+    private client:MongoClient
+    constructor(){
+        const url = 'mongodb://localhost:27017'
+        const client = new MongoClient(url);
+        this.client = client
     }
 
-    async getConnection() {
-        const conn = await this.conexao; 
-        return conn;
+    async getConnection(){
+        const conn = await this.client.connect();
+        const db = this.client.db("banco1022b");
+        return db
     }
 
     async end() {
-        const conn = await this.conexao; 
-        await conn.end();
+        const conn = await this.client.connect(); 
+        await conn.close();
     }
-
     async listar(){
         const conn = await this.getConnection()
-        const [result, fields] = await conn.query("SELECT * from produtos");
+        const result = await conn.collection("produtos").find().toArray()
         return result
     }
     async inserir(produto:{id:string,nome:string,descricao:string,preco:string,imagem:string}){
         const conn = await this.getConnection()
-        const sqlQuery = "INSERT INTO produtos (id,nome,descricao,preco,imagem) VALUES (?,?,?,?,?)"
-        const parametro = [produto.id,produto.nome,produto.descricao,produto.preco,produto.imagem]
-        const [result, fields] = await conn.query(sqlQuery,parametro);
+        const result = await conn.collection("produtos").insertOne(produto)
         return result
     }
     async excluir(id:string){
         const conn = await this.getConnection()
-        const sqlQuery = "DELETE FROM produtos WHERE id = ?"
-        const parametro = [id]
-        const [result, fields] = await conn.query(sqlQuery,parametro);
+        const result = await conn.collection("produtos").deleteOne({id:parseInt(id)})
         return result
     }
     async alterar(id:string,produto:{id?:string,nome:string,descricao:string,preco:string,imagem:string}){
         const conn = await this.getConnection()
-        const sqlQuery = "UPDATE produtos SET nome=?,descricao=?,preco=?,imagem=? WHERE id = ?"
-        const parametro = [produto.nome,produto.descricao,produto.preco,produto.imagem,id]
-        const [result, fields] = await conn.query(sqlQuery,parametro);
+        const result = await conn.collection("produtos").updateOne({id:parseInt(id)},{$set:produto})
         return result
     }
+
 }
 
-export default BancoMysql;
+export default BancoMongo
