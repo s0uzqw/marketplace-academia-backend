@@ -28,6 +28,11 @@ class BancoMongo{
         const result = await conn.collection("produtos").find().toArray()
         return result
     }
+    async listarPorId(){
+        const conn = await this.getConnection()
+        const result = await conn.collection("produtos").find().toArray()
+        return result
+    }
     async inserir(produto:{id:string,nome:string,descricao:string,preco:string,imagem:string}){
         const conn = await this.getConnection()
         const result = await conn.collection("produtos").insertOne(produto)
