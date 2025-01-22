@@ -29,7 +29,7 @@ app.get("/produtos",async(req,res)=>{
         res.status(500).send("Erro do servidor")
     }  
 })
-app.get("/produtos:id",async(req,res)=>{
+app.get("/produtos/:id",async(req,res)=>{
     try{
         const banco = new BancoMongo();
         const result = await banco.listarPorId(req.params.id)
@@ -48,7 +48,7 @@ app.post("/produtos",async(req,res)=>{
         console.log(id,nome,descricao,preco,imagem)
         const banco = new BancoMongo();
 
-        const produto = {id,nome,descricao,preco,imagem}
+        const produto = {id:parseInt(id),nome,descricao,preco,imagem}
 
         const result = await banco.inserir(produto)
         console.log(result)
