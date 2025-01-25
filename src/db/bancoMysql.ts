@@ -30,7 +30,7 @@ class BancoMysql {
         const [result, fields] = await conn.query("SELECT * from produtos");
         return result
     }
-    async inserir(produto:{id:string,nome:string,descricao:string,preco:string,imagem:string}){
+    async inserir(produto:{id:number,nome:string,descricao:string,preco:string,imagem:string}){
         const conn = await this.getConnection()
         const sqlQuery = "INSERT INTO produtos (id,nome,descricao,preco,imagem) VALUES (?,?,?,?,?)"
         const parametro = [produto.id,produto.nome,produto.descricao,produto.preco,produto.imagem]
