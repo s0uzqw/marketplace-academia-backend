@@ -1,10 +1,7 @@
 import mysql, { Connection } from 'mysql2/promise';
 
 class BancoMysql {
-    // Propriedade
     private conexao: Promise<Connection>;
-
-    // Métodos
     constructor() {
         this.conexao = mysql.createConnection({
             host: process.env.dbhost ? process.env.dbhost : "localhost",
@@ -27,27 +24,48 @@ class BancoMysql {
 
     async listar(){
         const conn = await this.getConnection()
-        const [result, fields] = await conn.query("SELECT * from produtos");
+        const [result, fields] = await conn.query("SELECT * from exercicios");
         return result
     }
-    async inserir(produto:{id:number,nome:string,descricao:string,preco:string,imagem:string}){
+    async inserir(exercicio:{id:number,nome:string,descricao:string,imagem:string}){
         const conn = await this.getConnection()
-        const sqlQuery = "INSERT INTO produtos (id,nome,descricao,preco,imagem) VALUES (?,?,?,?,?)"
-        const parametro = [produto.id,produto.nome,produto.descricao,produto.preco,produto.imagem]
+        const sqlQuery = "INSERT INTO exercicios (id,nome,descricao,imagem) VALUES (?,?,?,?)"
+        const parametro = [exercicio.id,exercicio.nome,exercicio.descricao,exercicio.imagem]
         const [result, fields] = await conn.query(sqlQuery,parametro);
         return result
     }
     async excluir(id:string){
         const conn = await this.getConnection()
-        const sqlQuery = "DELETE FROM produtos WHERE id = ?"
+        const sqlQuery = "DELETE FROM exercicios WHERE id = ?"
         const parametro = [id]
         const [result, fields] = await conn.query(sqlQuery,parametro);
         return result
     }
-    async alterar(id:string,produto:{id?:string,nome:string,descricao:string,preco:string,imagem:string}){
+    async alterar(id:string,exercicio:{id?:string,nome:string,descricao:string,imagem:string}){
         const conn = await this.getConnection()
-        const sqlQuery = "UPDATE produtos SET nome=?,descricao=?,preco=?,imagem=? WHERE id = ?"
-        const parametro = [produto.nome,produto.descricao,produto.preco,produto.imagem,id]
+        const sqlQuery = "UPDATE exercicios SET nome=?,descricao=?,imagem=? WHERE id = ?"
+        const parametro = [exercicio.nome,exercicio.descricao,exercicio.imagem,id]
+        const [result, fields] = await conn.query(sqlQuery,parametro);
+        return result
+    }
+    async inserirUser(usuario:{id:number,nome:string,funcao:string,email:string}){
+        const conn = await this.getConnection()
+        const sqlQuery = "INSERT INTO usuarios (id,nome,funcao,email) VALUES (?,?,?,?)"
+        const parametro = [usuario.id,usuario.nome,usuario.funcao,usuario.email]
+        const [result, fields] = await conn.query(sqlQuery,parametro);
+        return result
+    }
+    async excluirUser(id:string){
+        const conn = await this.getConnection()
+        const sqlQuery = "DELETE FROM usuarios WHERE id = ?"
+        const parametro = [id]
+        const [result, fields] = await conn.query(sqlQuery,parametro);
+        return result
+    }
+    async alterarUser(id:string,usuario:{id?:string,nome:string,funcao:string,email:string}){
+        const conn = await this.getConnection()
+        const sqlQuery = "UPDATE usuarios SET nome=?,funcao=?,email=? WHERE id = ?"
+        const parametro = [usuario.nome,usuario.funcao,usuario.email,id]
         const [result, fields] = await conn.query(sqlQuery,parametro);
         return result
     }

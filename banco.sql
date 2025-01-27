@@ -1,9 +1,8 @@
 USE banco1022b;
-CREATE TABLE IF NOT EXISTS produtos(
+CREATE TABLE IF NOT EXISTS exercicios(
 	id BIGINT PRIMARY KEY AUTO_INCREMENT,
     nome VARCHAR(50),
     descricao VARCHAR(50),
-    preco DECIMAL(10,2),
     imagem VARCHAR(300)
 );
-INSERT INTO produtos VALUES (1,'Iphone','Celular RUIM',5000.50,'SEM IMAGEM');
+INSERT INTO exercicios VALUES (1,'Supino reto','Para parte medial do peito','SEM IMAGEM');

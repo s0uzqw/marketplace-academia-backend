@@ -1,22 +1,13 @@
-// LIVE SERVER é do FRONT-END
-// QUEM É O LIVE SERVER DO BACK-END?
-
-// 1 - Para construir um servidor back-end e responder
-// Vamos utilizar o EXPRESS
 import express from 'express'
 import cors from 'cors'
 import mysql from 'mysql2/promise'
-//Criar um objeto do tipo express.
 const app = express()
-//incluir pra ele receber json
-app.use(express.json())  //Middleware
-//incluir o CORS -> QUANDO A GENTE TEM OUTRA PORTA FAZENDO REQUISIÇÃO PARA A PORTA DO SERVIDOR
+app.use(express.json())
 app.use(cors())
-//ROTAS
 
 import BancoMysql from './db/bancoMysql'
 
-app.get("/produtos",async(req,res)=>{
+app.get("/exercicios",async(req,res)=>{
     try{
         const banco = new BancoMysql();
         const result = await banco.listar()
@@ -29,15 +20,15 @@ app.get("/produtos",async(req,res)=>{
     }
 })
 
-app.post("/produtos",async(req,res)=>{
+app.post("/exercicios",async(req,res)=>{
     try{
-        const {id,nome,descricao,preco,imagem} = req.body
-        console.log(id,nome,descricao,preco,imagem)
+        const {id,nome,descricao,imagem} = req.body
+        console.log(id,nome,descricao,imagem)
         const banco = new BancoMysql();
 
-        const produto = {id:parseInt(id),nome,descricao,preco,imagem}
+        const exercicio = {id:parseInt(id),nome,descricao,imagem}
 
-        const result = await banco.inserir(produto)
+        const result = await banco.inserir(exercicio)
         console.log(result)
         
         await banco.end()
@@ -49,10 +40,10 @@ app.post("/produtos",async(req,res)=>{
     }  
 })
 
-app.delete("/produtos/:id",async (req,res)=>{
-    console.log("Tentando excluir o produto de id:",req.params.id)
+app.delete("/exercicios/:id",async (req,res)=>{
+    console.log("Tentando excluir o exercicio de id:",req.params.id)
     try{
-        const sqlQuery = "DELETE FROM produtos WHERE id = ?"
+        const sqlQuery = "DELETE FROM exercicios WHERE id = ?"
         const parametro = [req.params.id]
 
         const banco = new BancoMysql();
@@ -65,16 +56,82 @@ app.delete("/produtos/:id",async (req,res)=>{
         res.status(500).send("Erro do servidor")
     }
 })
-app.put("/produtos/:id",async (req,res)=>{
-    console.log("Tentando alterar o produto de id:",req.params.id)
+app.put("/exercicios/:id",async (req,res)=>{
+    console.log("Tentando alterar o exercicio de id:",req.params.id)
     try{
-        const {nome,descricao,preco,imagem} = req.body
-        //const sqlQuery = "UPDATE produtos SET nome=?,descricao=?,preco=?,imagem=? WHERE id = ?"
-        const produto = {nome,descricao,preco,imagem}
+        const {nome,descricao,imagem} = req.body
+        //const sqlQuery = "UPDATE exercicios SET nome=?,descricao=?,imagem=? WHERE id = ?"
+        const exercicio = {nome,descricao,imagem}
 
         const banco = new BancoMysql();
 
-        const result = await banco.alterar(req.params.id,produto)
+        const result = await banco.alterar(req.params.id,exercicio)
+
+        res.status(200).send(result)
+    }catch(e){
+        console.log(e)
+        res.status(500).send("Erro do servidor")
+    }
+})
+
+app.get("/usuarios",async(req,res)=>{
+    try{
+        const banco = new BancoMysql();
+        const result = await banco.listar()
+        console.log(result)
+        await banco.end()
+        res.send(result)
+    }catch(e){
+        console.log(e)
+        res.status(500).send("Erro do servidor")
+    }
+})
+
+app.post("/usuarios",async(req,res)=>{
+    try{
+        const {id,nome,funcao,email} = req.body
+        console.log(id,nome,funcao,email)
+        const banco = new BancoMysql();
+
+        const usuario = {id:parseInt(id),nome,funcao,email}
+
+        const result = await banco.inserirUser(usuario)
+        console.log(result)
+        
+        await banco.end()
+        
+        res.status(200).send(result)
+    }catch(e){
+        console.log(e)
+        res.status(500).send("Erro do servidor")
+    }  
+})
+
+app.delete("/usuarios/:id",async (req,res)=>{
+    console.log("Tentando excluir o usuario de id:",req.params.id)
+    try{
+        const sqlQuery = "DELETE FROM usuarios WHERE id = ?"
+        const parametro = [req.params.id]
+
+        const banco = new BancoMysql();
+
+        const result = await banco.excluir(req.params.id)
+
+        res.status(200).send(result)
+    }catch(e){
+        console.log(e)
+        res.status(500).send("Erro do servidor")
+    }
+})
+app.put("/usuarios/:id",async (req,res)=>{
+    console.log("Tentando alterar o usuario de id:",req.params.id)
+    try{
+        const {nome,funcao,email} = req.body
+        const usuario = {nome,funcao,email}
+
+        const banco = new BancoMysql();
+
+        const result = await banco.alterarUser(req.params.id,usuario)
 
         res.status(200).send(result)
     }catch(e){
