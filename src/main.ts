@@ -114,7 +114,7 @@ app.delete("/usuarios/:id",async (req,res)=>{
 
         const banco = new BancoMysql();
 
-        const result = await banco.excluir(req.params.id)
+        const result = await banco.excluirUser(req.params.id)
 
         res.status(200).send(result)
     }catch(e){

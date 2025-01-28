@@ -6,7 +6,7 @@ class BancoMysql {
         this.conexao = mysql.createConnection({
             host: process.env.dbhost ? process.env.dbhost : "localhost",
             user: process.env.dbuser ? process.env.dbuser : "root",
-            password: process.env.dbpassword ? process.env.dbpassword : "!Luis02132027",
+            password: process.env.dbpassword ? process.env.dbpassword : "",
             database: process.env.dbname ? process.env.dbname : "banco1022b",
             port: process.env.dbport ? parseInt(process.env.dbport) : 3306
         });
@@ -55,7 +55,7 @@ class BancoMysql {
     }
     async inserirUser(usuario:{id:number,nome:string,funcao:string,email:string,foto:string}){
         const conn = await this.getConnection()
-        const sqlQuery = "INSERT INTO usuarios (id,nome,funcao,email) VALUES (?,?,?,?,?)"
+        const sqlQuery = "INSERT INTO usuarios (id,nome,funcao,email,foto) VALUES (?,?,?,?,?)"
         const parametro = [usuario.id,usuario.nome,usuario.funcao,usuario.email,usuario.foto]
         const [result, fields] = await conn.query(sqlQuery,parametro);
         return result
