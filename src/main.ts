@@ -60,7 +60,6 @@ app.put("/exercicios/:id",async (req,res)=>{
     console.log("Tentando alterar o exercicio de id:",req.params.id)
     try{
         const {nome,descricao,imagem} = req.body
-        //const sqlQuery = "UPDATE exercicios SET nome=?,descricao=?,imagem=? WHERE id = ?"
         const exercicio = {nome,descricao,imagem}
 
         const banco = new BancoMysql();
@@ -77,7 +76,7 @@ app.put("/exercicios/:id",async (req,res)=>{
 app.get("/usuarios",async(req,res)=>{
     try{
         const banco = new BancoMysql();
-        const result = await banco.listar()
+        const result = await banco.listarUser()
         console.log(result)
         await banco.end()
         res.send(result)
@@ -89,11 +88,11 @@ app.get("/usuarios",async(req,res)=>{
 
 app.post("/usuarios",async(req,res)=>{
     try{
-        const {id,nome,funcao,email} = req.body
-        console.log(id,nome,funcao,email)
+        const {id,nome,funcao,email,foto} = req.body
+        console.log(id,nome,funcao,email,foto)
         const banco = new BancoMysql();
 
-        const usuario = {id:parseInt(id),nome,funcao,email}
+        const usuario = {id:parseInt(id),nome,funcao,email,foto}
 
         const result = await banco.inserirUser(usuario)
         console.log(result)
@@ -126,8 +125,8 @@ app.delete("/usuarios/:id",async (req,res)=>{
 app.put("/usuarios/:id",async (req,res)=>{
     console.log("Tentando alterar o usuario de id:",req.params.id)
     try{
-        const {nome,funcao,email} = req.body
-        const usuario = {nome,funcao,email}
+        const {nome,funcao,email,foto} = req.body
+        const usuario = {nome,funcao,email,foto}
 
         const banco = new BancoMysql();
 
